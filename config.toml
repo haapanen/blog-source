@@ -1,4 +1,4 @@
-baseurl = "http://localhost:1313"
+baseurl = "https://jussihaapanen.com"
 title = "JUSSI HAAPANEN"
 theme = "hugo-coder"
 languagecode = "en"
@@ -15,7 +15,7 @@ pygmentscodefencesguesssyntax = true
     info = "Software Designer"
     description = "Jussi Haapanen's personal website"
     keywords = "blog,developer,personal"
-    avatarurl = "images/avatar.jpg"
+    avatarurl = "images/avatar.jpeg"
 
     favicon_32 = "/img/favicon-32x32.png"
     favicon_16 = "/img/favicon-16x16.png"
