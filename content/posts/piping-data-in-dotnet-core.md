@@ -74,3 +74,5 @@ process.WaitForExit();
 outputStream.Seek(0, SeekOrigin.Begin);
 return outputStream;
 ```
+
+One missing line can make a huge difference.
