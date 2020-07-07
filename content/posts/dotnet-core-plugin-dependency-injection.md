@@ -6,7 +6,7 @@ draft: false
 
 # Introduction
 
-You might run into a case where you would like to extend the application without updating the application core. Plugins could be one solution for the issue. It's fairly simple to implement a plugin architecture in .NET Core. Microsoft has documented the process of adding plugin support for your application in [https://docs.microsoft.com/en-us/dotnet/core/tutorials/creating-app-with-plugin-support](https://docs.microsoft.com/en-us/dotnet/core/tutorials/creating-app-with-plugin-support).
+You might run into a case where you would like to extend the application without updating the application core. Plugins could be one solution for the issue. It's fairly simple to implement a plugin architecture in .NET Core. Microsoft has documented the process of adding plugin support for your application in [Creating an application with plugin support](https://docs.microsoft.com/en-us/dotnet/core/tutorials/creating-app-with-plugin-support).
 
 It's a good quick start to plugin architecture and gets you quite far. However, it does not explain how to add support for dependency injection from host process to the plugin process. Plugins own internal dependencies could be created on plugin initialization and injected to the executing code but I prefer to have the .NET Core dependency injection system handle these dependencies as well. Plugin configuration is a good example of an object I'd prefer to be initialized and injected by the .NET Core DI.
 
@@ -18,7 +18,7 @@ Imagine we're developing a software where we receive messages from an external s
 
 Overview of the imaginary system
 
-In the example code I've implemented the event handler as a .NET Core background service. The full example code is available at LINK
+In the example code I've implemented the event handler as a .NET Core background service. The full example code is available at [GitHub](https://github.com/haapanen/NetCorePluginDI)
 
 We'll use the .NET Core documentation plugin application example as the starting point for the system. In the example the project structure is following:
 
@@ -79,7 +79,7 @@ It will receive a message and "store" it to the blob storage (for demonstration 
 
 The above example with the original plugin example will work but there's one major issue: All of the plugins need some sort of configuration. Blob storage and DB integrations need a connection string, HTTP integration needs an URL to send the message to.
 
-You could approach this by initializing the settings in the plugin by reading the settings from a file, injecting and using the IConfiguration interface or through some other method. However it would require you to define the settings initialization logic for each integration separately.
+We could approach this by initializing the settings in the plugin by reading the settings from a file, injecting and using the IConfiguration interface or through some other method. However it would require us to define the settings initialization logic for each integration separately.
 
 ```csharp
 public class BlobStorageArchiveIntegration : IIntegration
@@ -225,7 +225,7 @@ info: NetCorePluginDI.Integrations.Http.HttpIntegration[0]
 
 As you can see, we'll load integrations from two DLLs, the Blob Storage and HTTP integration DLLs. The system receives a message every second and sends it to the integrations. In the log output you can see HttpIntegration logging the endpoint url that was defined in the project appsettings.json (https://localhost:3000/api/message).
 
-This can be extended even further. If we have a type we'd like to inject to the plugin we can implement another interface. I'll call it IInjectedDependency. It's an empty interface. All types that implement this interface will be registered to the service provider.
+This can be extended even further. If we have a type we'd like to inject to the plugin we can implement another interface. Let's call it IInjectedDependency. It's an empty interface. All types that implement this interface will be registered to the service provider.
 
 ```csharp
 public interface IInjectedDependency
@@ -240,5 +240,36 @@ public class Service : IInjectedDependency
 		}
 }
 ```
+
+We could then register all the types implementing IInjectedDependency in the
+RegisterIntegrationsFromAssembly method.
+
+```csharp
+if (typeof(IInjectedDependency).IsAssignableFrom(type))
+{
+    // Get all of the interfaces the type implements except
+    // the IInjectedDependency
+    var implementedInterfaces = type.GetInterfaces().Where(i => i != typeof(IInjectedDependency)).ToList();
+
+    // Register as implemented interfaces
+    if (implementedInterfaces.Any())
+    {
+        foreach (var interfaceType in implementedInterfaces)
+        {
+            // Injected dependency lifetime must be considered
+            // Transient is used as an example but correct lifetime
+            // must be specified based on the use case
+            services.AddTransient(interfaceType, type);
+        }
+    } else
+    {
+        // No implemented interface, register as self
+        services.AddTransient(type);
+    }
+}
+```
+
+Additionally we'll check if the type implements any interfaces. If it does, we'll register
+the type as implemented interfaces. If not, we'll register to type as self.
 
 This way we can fully utilize the .NET Core DI framework within the plugins.
