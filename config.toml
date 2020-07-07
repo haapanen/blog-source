@@ -3,6 +3,7 @@ title = "JUSSI HAAPANEN"
 theme = "hugo-coder"
 languagecode = "en"
 defaultcontentlanguage = "en"
+disqusShortname = "haapanen"
 
 paginate = 20
 canonifyurls = true
