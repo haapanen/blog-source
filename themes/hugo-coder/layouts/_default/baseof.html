@@ -136,7 +136,7 @@
         });
   </script>
 
-    {{ if .Site.IsServer }}
+    {{ if hugo.IsServer }}
       {{ $cssOpts := (dict "targetPath" "css/coder.css" "enableSourceMap" true ) }}
       {{ $styles := resources.Get "scss/coder.scss" | resources.ExecuteAsTemplate "style.coder.css" . | toCSS $cssOpts }}
       <link rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen">
@@ -147,7 +147,7 @@
     {{ end }}
 
     {{ if .Site.Params.rtl }}
-      {{ if .Site.IsServer }}
+      {{ if hugo.IsServer }}
         {{ $cssOpts := (dict "targetPath" "css/coder-rtl.css" "enableSourceMap" true ) }}
         {{ $styles := resources.Get "scss/coder-rtl.scss" | resources.ExecuteAsTemplate "style.coder-rtl.css" . | toCSS $cssOpts }}
         <link rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen">
@@ -159,7 +159,7 @@
     {{ end }}
 
     {{ if .Site.Params.inverted }}
-      {{ if .Site.IsServer }}
+      {{ if hugo.IsServer }}
         {{ $cssOpts := (dict "targetPath" "css/coder-inverted.css" "enableSourceMap" true ) }}
         {{ $styles := resources.Get "scss/coder-inverted.scss" | resources.ExecuteAsTemplate "style.coder-inverted.css" . | toCSS $cssOpts }}
         <link rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen">
