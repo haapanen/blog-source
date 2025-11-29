@@ -1,6 +1,7 @@
 ---
 title: "Minimal permissions for Azure Workbook, Log Analytics Workspace & Application Insights"
-date: 2025-11-29 20:00:00
+date: 2025-11-29T20:00:00+03:00
+draft: false
 ---
 
 ## The problem

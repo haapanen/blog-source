@@ -14,7 +14,7 @@ pygmentscodefencesguesssyntax = true
 
 [params]
     author = "Jussi Haapanen"
-    info = "Software Designer"
+    info = "Lead Developer"
     description = "Jussi Haapanen's personal website"
     keywords = "blog,developer,personal"
     avatarurl = "images/avatar.jpg"
