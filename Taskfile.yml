@@ -1,0 +1,32 @@
+version: "3"
+
+tasks:
+  dev:
+    desc: |
+      Start the development environment
+    cmds:
+      - hugo server
+
+  build:
+    desc: |
+      Build the static site
+    cmds:
+      - hugo
+
+  clean:
+    desc: |
+      Clean the public directory
+    cmds:
+      - rm -rf public/*
+
+  deploy:
+    desc: |
+      Deploy the site to GitHub Pages
+    cmds:
+      - task clean
+      - git clone git@github.com:haapanen/blog.git public
+      - hugo
+      - cd public
+      - git add .
+      - git commit -m "Deploy latest changes"
+      - git push origin main
